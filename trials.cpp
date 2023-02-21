@@ -19,7 +19,7 @@ int main(){
             if(s[i]==s[i+1]) count++;
         }
         
-        if(count<=1) cout<< "YES"<<endl;
+        if(count<=1) cout<< "YES "<<endl;
         else cout<< "NO"<<endl;
     }
 
