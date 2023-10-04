@@ -32,6 +32,7 @@ void mergeSort(int arr[],int n){
                 l=i;
                 h=i+p-1;
                 mid=(l+h)/2;
+               // mid = l+(h-l)/2;
                 merge(arr,l,mid,h);
             }
             
