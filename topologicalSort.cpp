@@ -1,23 +1,19 @@
-#include <iostream>
-#include <vector>
-#include <unordered_map>
-#include <list>
-#include <stack>
+#include <bits/stdc++.h>
 
 using namespace std;
-//  khans topo sort begin
-void khansToposort(int node, vector<bool>& visited, stack<int>& s, unordered_map<int, list<int>>& adj) {
+//   topo sort begin
+void Toposort(int node, vector<bool>& visited, stack<int>& s, unordered_map<int, vector<int>>& adj) {
     visited[node] = true;
     for (auto neigh : adj[node]) {
         if (!visited[neigh]) {
-            khansToposort(neigh, visited, s, adj);
+            Toposort(neigh, visited, s, adj);
         }
     }
     s.push(node);
 }
 
-vector<int> khansTopologicalSort(vector<vector<int>>& edges, int v, int e) {
-    unordered_map<int, list<int>> adj;
+vector<int> TopologicalSort(vector<vector<int>>& edges, int v, int e) {
+    unordered_map<int, vector<int>> adj;
     for (int i = 0; i < e; i++) {
         int u = edges[i][0];
         int v = edges[i][1];
@@ -28,7 +24,7 @@ vector<int> khansTopologicalSort(vector<vector<int>>& edges, int v, int e) {
     stack<int> s;
     for (int i = 0; i < v; i++) {
         if (!visited[i])
-            khansToposort(i, visited, s, adj);
+            Toposort(i, visited, s, adj);
     }
     vector<int> ans;
     while (!s.empty()) {
@@ -42,7 +38,36 @@ vector<int> khansTopologicalSort(vector<vector<int>>& edges, int v, int e) {
 
 
 
+vector<int> kahnsTopologicalSort(vector<vector<int>>& edges, int v, int e) {
+    unordered_map<int, vector<int>> adj;
+    for (int i = 0; i < e; i++) {
+        int u = edges[i][0];
+        int v = edges[i][1];
+        adj[u].push_back(v);
+    }
 
+    queue<int>q;
+    vector<int>ans;
+    vector<int>indegree(v);
+    for(int i=0;i<v;i++){
+            for(auto x : adj[i]){
+                    indegree[x]++;
+            }
+
+    }
+    
+    for(int i=0;i<v;i++) if(indegree[i]==0) q.push(i);
+    while(!q.empty()){
+        int top = q.front(); q.pop();
+        ans.push_back(top);
+        for(auto neigh : adj[top]){
+                indegree[neigh]--;
+                if(indegree[neigh]<=0) q.push(neigh);
+        }
+    }
+    return ans;
+
+}
 int main() {
     int v = 6; // Number of vertices
     int e = 6; // Number of edges
@@ -52,13 +77,22 @@ int main() {
         {4, 0},
         {4, 1},
         {2, 3},
-        {3, 1}
+        {3,5}
     };
 
-    vector<int> result = khansTopologicalSort(edges, v, e);
+    //dfs
+    vector<int> result = TopologicalSort(edges, v, e);
 
-    cout << "Topological Sort Order: ";
+    //bfs kahns algo
+    vector<int> result2 = kahnsTopologicalSort(edges, v, e);
+
+    cout << "Topological Sort Order DFS: ";
     for (int node : result) {
+        cout << node << " ";
+    }
+    cout << endl;
+    cout << "Topological Sort Order BFS: ";
+    for (int node : result2) {
         cout << node << " ";
     }
     cout << endl;

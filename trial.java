@@ -1,36 +1,46 @@
+import java.io.*;
 import java.util.*;
-
-public class Main
-{
-    public static int ansString(String str) {
-        int ans = 0;
-        int n = str.length();
-
-        for (int i = 0; i < n; i++) {
-            if (i + 3 < n && isPalindrome(str.substring(i, i + 4)))  ans += 5;
-            if (i + 4 < n && isPalindrome(str.substring(i, i + 5)))  ans += 10;
-            
-        }
-
-        return ans;
-    }
-
-   public static boolean isPalindrome(String s) {
-        int left = 0;
-        int right = s.length() - 1;
-
-        while (left < right) {
-            if (s.charAt(left) != s.charAt(right))  return false;
-            left++;
-            right--;
-        }
-
-        return true;
-    }
+import java.util.Scanner;
+import java.util.List;
+import java.util.ArrayList;
+public class Solution {
     
     public static void main(String[] args) {
-        String str = "CwaFMIWFITTFSQQmCRPhTThKJADOWPуoop";
-        int result = ansString(str);
-        System.out.println(result); // Output: 15
+       Scanner sc = new Scanner(System.in);
+        int n=sc.nextInt();
+        int[] a=new int[n];
+        int[] b= new int[n];
+        for(int i=0;i<n;i++){
+            a[i]=sc.nextInt();
+            b[i]=sc.nextInt();
+        }
+        for(int i=0;i<n-1;i++){
+            for(int j=0;j<n-i-1;j++){
+                if(a[j]>a[j+1]){
+                    int temp=a[j];
+                    a[j]=a[j+1];
+                    a[j+1]=temp;
+                   temp=b[j];
+                    b[j]=b[j+1];
+                    b[j+1]=temp;
+                }
+            }
+        }
+        int count=0;
+        List <Integer> list = new ArrayList<>();
+        list.add(b[0]);count=1;
+        for(int i=1;i<n;i++){
+            int min=Collections.min(list);
+            if(a[i]<min){
+                list.add(b[i]);count++;}
+            else if(a[i]>=min){
+                list.add(b[i]);
+                list.remove(Integer.valueOf(min));
+                Collections.sort(list);
+            }                                                                                                                                                                                                                                                        
+                
+        }
+        System.out.print(count);
+        
     }
 }

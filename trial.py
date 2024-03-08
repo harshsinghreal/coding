@@ -1,55 +1,66 @@
-class Stack:
-    def __init__(self):
-        self.items = []
+# dp = {}
+# p = [0,1,2,3,4,5,6,7,8,9]
 
-    def push(self, item):
-        self.items.append(item)
+# def count_strings(n, zeroCount):
+#     if n == 0:
+#         return 1 if zeroCount % 2 == 0 else 0
 
-    def pop(self):
-        return self.items.pop()
+#     key = (n, zeroCount)
 
-    def is_empty(self):
-        return len(self.items) == 0
+#     if key in dp:
+#         return dp[key]
 
-    def top(self):
-        if self.is_empty():
-            return None
-        else:
-            return self.items[-1]
+#     total_strings = 0
+    
+#     for ch in p:
+#         if ch == 0:
+#             total_strings += count_strings(n - 1, zeroCount + 1)
+#         else:
+#             total_strings += count_strings(n - 1, zeroCount)
 
+#     dp[key] = total_strings
+#     return dp[key]
 
-def main():
-    r_stack = Stack()
-    u_stack = Stack()
-    r_val = 0
-    u_val = 0
-    x_val = 0
-    num = int(input())
-    for i in range(num):
-        garbage = int(input())
-        r_stack.push(garbage)
+# n = int(input())
+# ans = count_strings(n, 0)
 
-    while not r_stack.is_empty():
-        garbage = r_stack.pop()
-        if u_stack.is_empty() or garbage <= u_stack.top():
-            u_stack.push(garbage)
-            r_val += 1
-        elif u_stack.size() > 1 and garbage > u_stack.top():
-            u_garbage = u_stack.pop()
-            if garbage <= u_stack.top():
-                u_stack.push(garbage)
-            else:
-                r_stack.push(garbage)
-                u_val += 1
-                x_val += 1
-        elif u_stack.size() == 1 and garbage > u_stack.top():
-            u_garbage = u_stack.pop()
-            x_val += 1
-            u_stack.push(garbage)
-            r_stack.push(u_garbage)
-
-    print(f"{r_val} {u_val} {x_val}")
+# print(ans)
 
 
-if __name__ == "__main__":
-    main()
+
+
+
+
+
+
+
+
+
+
+
+
+sigmaSet = [0,1,2,3,4,5,6,7,8,9]
+def count_strings(n, zeroCount):
+    dp = [[0] * (n+10) for _ in range(n + 10)]
+    for i in range (0,n+1,2):
+        dp[0][i]=1
+
+    for len in range (1,n+1):
+        for aCount in range (0,n+1):
+            for ch in sigmaSet:
+                if ch==0:
+                    dp[len][aCount]+=dp[len - 1][aCount + 1]
+                else:
+                    dp[len][aCount]+=dp[len - 1][aCount]
+
+    return dp[n][0]
+        
+
+
+
+
+
+n = int(input())
+ans = count_strings(n, 0)
+
+print(ans)
