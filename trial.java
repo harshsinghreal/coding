@@ -1,46 +1,35 @@
-import java.io.*;
-import java.util.*;
-import java.util.Scanner;
-import java.util.List;
-import java.util.ArrayList;
-public class Solution {
-    
-    public static void main(String[] args) {
-       Scanner sc = new Scanner(System.in);
-        int n=sc.nextInt();
-        int[] a=new int[n];
-        int[] b= new int[n];
-        for(int i=0;i<n;i++){
-            a[i]=sc.nextInt();
-            b[i]=sc.nextInt();
+class Solution {
+    public double mincostToHireWorkers(int[] quality, int[] wage, int k) {
+        int n = quality.length;
+        double[][]labourRatio = new double[n][2];
+        for(int worker=0; worker<n;worker++){
+            labourRatio[worker][0] = (double)wage[worker]/quality[worker];
+            labourRatio[worker][1] = quality[worker];
         }
-        for(int i=0;i<n-1;i++){
-            for(int j=0;j<n-i-1;j++){
-                if(a[j]>a[j+1]){
-                    int temp=a[j];
-                    a[j]=a[j+1];
-                    a[j+1]=temp;
-                   temp=b[j];
-                    b[j]=b[j+1];
-                    b[j+1]=temp;
-                }
+        Arrays.sort(labourRatio,(a,b)->Double.compare(a[0],b[0]));
+        PriorityQueue<Integer>pq = new PriorityQueue<>(Collections.reverseOrder());
+        double cumQuality = 0;
+        for(int i=0;i<k;i++){
+            pq.offer((int)labourRatio[i][1]);
+            cumQuality+=labourRatio[i][1];
+        }
+
+        double firstLabourRatio = labourRatio[k-1][0];
+        double ans = firstLabourRatio*cumQuality;
+
+        for(int manager = k; manager<n;manager++){
+            firstLabourRatio = labourRatio[manager][0];
+            pq.offer((int)labourRatio[manager][1]);
+            cumQuality+=labourRatio[manager][1];
+
+            if(pq.size()>k){
+                cumQuality-=pq.poll();
             }
+
+            ans= Math.min(ans,firstLabourRatio*cumQuality);
+
         }
-        int count=0;
-        List <Integer> list = new ArrayList<>();
-        list.add(b[0]);count=1;
-        for(int i=1;i<n;i++){
-            int min=Collections.min(list);
-            if(a[i]<min){
-                list.add(b[i]);count++;}
-            else if(a[i]>=min){
-                list.add(b[i]);
-                list.remove(Integer.valueOf(min));
-                Collections.sort(list);
-            }                                                                                                                                                                                                                                                        
-                
-        }
-        System.out.print(count);
-        
+
+        return ans;
     }
 }
