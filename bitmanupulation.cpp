@@ -8,6 +8,30 @@ void printBinary(int num){
     cout<<endl;
 }
 
+int pow2(int a,int b){
+    if(b==0) return 1;
+    int res = pow2(a, b/2);
+    if(b&1){
+        return (a*res*res);
+    }
+    else{
+        return (res*res);
+    }
+}
+
+
+int pow3(int a, int b){
+    int ans = 1;
+    while(b>0){
+        if(b&1){
+            ans*=a;
+        }
+        a*=a;
+        b>>=1;
+    }
+    return ans;
+}
+
 
 int main(){
 
@@ -44,6 +68,9 @@ int main(){
 
 /*#############################################################################*/    
 
-
+double dbl = 1e23;
+cout<<fixed<<setprecision(30)<<dbl<<endl; //double value is not stable
+cout<<pow2(2,3)<<endl; //calculate power recursive
+cout<<pow3(2,5)<<endl;  // calculate power iterative
     return 0;
 }
