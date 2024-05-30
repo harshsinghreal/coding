@@ -16,7 +16,7 @@ class Solution {
 
         double firstLabourRatio = labourRatio[k-1][0];
         double ans = firstLabourRatio*cumQuality;
-
+ 
         for(int manager = k; manager<n;manager++){
             firstLabourRatio = labourRatio[manager][0];
             pq.offer((int)labourRatio[manager][1]);
