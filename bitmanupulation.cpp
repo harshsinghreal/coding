@@ -57,6 +57,7 @@ int main(){
     //check even odd
     if(val & (val-1)) cout<<val<<" is not power of two"<<endl;  // 16 = 10000  16-1 = 01111
     else cout<<"power of two"<<endl;
+    // (n&1)
 
 
 /*###################   SWAP TWO NUMBER WITHOUT 3RD VAIABLE ##################*/

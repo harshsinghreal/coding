@@ -1,55 +1,86 @@
-#include <bits/stdc++.h>
+#include <iostream>
+#include <string>
+#include <vector>
+#include <algorithm>
+#include<stack>
+
 using namespace std;
 
-
-void merge(  vector<int>&a, int start, int center, int last) {
-    int firstArraySize = center - start + 1,secondArraySize = last - center,firstArray[firstArraySize],secondArray[secondArraySize];
-
-    for (int i = 0; i < firstArraySize; i++) firstArray[i] = a[start + i];
-    for (int j = 0; j < secondArraySize; j++) secondArray[j] = a[center + 1 + j];
-
-    int j=0,i=0,k = start;
-
-    if (firstArray[i] <= secondArray[j]) {
-        while (i < firstArraySize) a[k++] = firstArray[i++];
-        while (j < secondArraySize)  a[k++] = secondArray[j++];
-    } 
-    else {
-        while (j < secondArraySize)  a[k++] = secondArray[j++];
-        while (i < firstArraySize)  a[k++] = firstArray[i++];    
+string multiply(string a, string b) {
+    int m = a.size(), n = b.size();
+    vector<int> result(m + n, 0);
+    
+    for (int i = m - 1; i >= 0; --i) {
+        for (int j = n - 1; j >= 0; --j) {
+            int mul = (a[i] - '0') * (b[j] - '0');
+            int sum = mul + result[i + j + 1];
+            result[i + j] += sum / 10;
+            result[i + j + 1] = sum % 10;
+        }
     }
+    
+    string product;
+    for (int num : result) {
+        if (!(product.empty() && num == 0)) {
+            product.push_back(num + '0');
+        }
+    }
+    
+    return product.empty() ? "0" : product;
 }
 
-void solver(  vector<int>&a, int start, int last) {
-    if (start < last) {
-        int center = (start + last) / 2;
-        solver(a, start, center);
-        solver(a, center + 1, last);
-        merge(a, start, center, last);
+bool hasAdjacentDuplicates(const vector<int>& digits) {
+    for (int i = 0; i < digits.size() - 1; ++i) {
+        if (digits[i] == digits[i + 1]) {
+            return true;
+        }
     }
+    return false;
+}
+
+int ArrayChallenge(int n) {
+    string numStr = to_string(n);
+     
+    int counter = 1;
+    stack<string>st;
+    st.push(numStr);
+    while (true) {
+
+        string tempStr = numStr;
+
+        for(int i=0;i<st.size();i++){
+            stack<string>st2;
+        for (char c : tempStr) {
+            vector<int>digits;
+            string productStr = multiply(tempStr, string(1, c));
+            // cout<<productStr<<endl;
+            string jointString = tempStr+productStr;
+            
+            st2.push(jointString);
+            st.push(productStr);
+            for (char ch : jointString) {
+                digits.push_back(ch - '0');
+            }
+             if (hasAdjacentDuplicates(digits) ) {
+            return counter;
+        }
+        }
+        }
+
+        // numStr = multiply(tempStr, tempStr.substr(0, 1)); // update n to be n * its first digit
+        numStr = st.top();st.pop();
+        counter++;
+         if(counter>15) break;
+         
+    }
+
+    return counter;
 }
 
 int main() {
-
- int n_dp, r_op = 0, u_op = 0, x_op = 0;
-    cin>>n_dp;
-    vector<int> vec_dp (n_dp,0);
-    vector<int> :: iterator j;
-    for(int i = 0; i<n_dp; i++)
-    {
-        cin>>vec_dp[i];
-    }
-
-    int num;
-    cin >> num; 
-   vector<int>arr;
-    for (int i = 0; i < num; i++) {
-        int x;
-        cin >> x;
-        arr.push_back(x);
-    }
-    solver(arr, 0, num-1);
-    
-    for(int x: arr) cout<<x<<" ";
+    cout << ArrayChallenge(134) << endl; // Output: 1
+    cout << ArrayChallenge(8) << endl; // Output: 3
+    cout << ArrayChallenge(14) << endl; // Output: 3
+    cout << ArrayChallenge(198) << endl; // Output: 2
     return 0;
 }
