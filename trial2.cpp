@@ -1,44 +1,46 @@
-#include <iostream>
-#include <vector>
-#include <algorithm>
+#include <bits/stdc++.h>
 
 using namespace std;
 
-int minInitialBonus(vector<vector<int>>& grid) {
-    int m = grid.size();
-    int n = grid[0].size();
-
-vector<vector<int>> dp(m, vector<int>(n, 0));
-dp[m-1][n-1] = max(1, 1 - grid[m-1][n-1]);
- for (int j = n - 2; j >= 0; j--) {
-        dp[m-1][j] = max(1, dp[m-1][j + 1] - grid[m-1][j]);
-    }
- for (int i = m - 2; i >= 0; i--) {
-        dp[i][n-1] = max(1, dp[i + 1][n-1] - grid[i][n-1]);
-    }
- for (int i = m - 2; i >= 0; i--) {
-        for (int j = n - 2; j >= 0; j--) {
-            int minCostOnExit = min(dp[i + 1][j], dp[i][j + 1]);
-            dp[i][j] = max(1, minCostOnExit - grid[i][j]);
+long long max_cost = 0;
+array<long long, 2> dfs(int i, int p, vector<vector<int>> &al, vector<int>& price) {
+    array<long long, 2> res({price[i], 0});
+    for (int j : al[i])
+        if (j != p) {
+            auto res_j = dfs(j, i, al, price);
+            max_cost = max({ max_cost, res[0] + res_j[1], res[1] + res_j[0] });
+            res[0] = max(res[0], res_j[0] + price[i]);
+            res[1] = max(res[1], res_j[1] + price[i]);
         }
+    return i == 0 ? array<long long, 2>({max_cost, 0}) : res;
+}
+long long maxOutput(int n, vector<vector<int>>& edges, vector<int>& price) {
+    vector<vector<int>> al(n);
+    for(auto& e : edges) {
+        al[e[0]].push_back(e[1]);
+        al[e[1]].push_back(e[0]);
     }
-  return dp[0][0];
+    return dfs(0, -1, al, price)[0];
 }
 
+
 int main() {
-    int m, n;
-   cin >> m;
+    int n;
     cin >> n;
 
-    vector<vector<int>> grid(m, vector<int>(n));
-   for (int i = 0; i < m; i++) {
-        for (int j = 0; j < n; j++) {
-            cin >> grid[i][j];
-        }
+    vector<vector<int>> edges(n - 1);
+    for (int i = 0; i < n - 1; ++i) {
+        int a, b;
+        cin >> a >> b;
+        edges[i] = {a, b};
     }
 
-    int result = minInitialBonus(grid);
-    cout  << result << endl;
+    vector<int> price(n);
+    for (int i = 0; i < n; ++i) {
+        cin >> price[i];
+    }
+    
+    cout << maxOutput(n, edges, price) << endl;
 
     return 0;
 }

@@ -1,11 +1,25 @@
+#include<stdio.h>
+#include<stdlib.h>
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-int main() {
+int main(){
+
+  
+    int n = 5;int *ptr,*ctr;
+    for(int i=0;i<110000;i++){
+    
+     ptr = malloc(i*sizeof(int));
+     ctr = calloc(n,sizeof(int));
+    }
+
+    // printf("%d %d",sizeof(ptr),sizeof(ctr));
+    // for(int i=0;i<n;i++){
+    //     scanf("%d",&ptr[i]);
+    // }
+    // free(ptr);
+    // for(int i=0;i<n;i++){
+    //     printf("%d ",ptr[i]);
+    // }
+
    
-    int output;
-    scanf("%d",&output);
-    printf("x = %d",output+5);
     return 0;
 }

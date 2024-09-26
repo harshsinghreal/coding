@@ -1,2 +1,3 @@
-
-    a = a^b;
+ // ~GermanSephard(){
+    //         cout<<"distroyed";
+    // }
