@@ -1,53 +1,59 @@
-#include <stdio.h>
-#include <stdint.h>
-#include <string.h>
-#include "gps_logger.h"
+#include <iostream>
+#include <climits>
+using namespace std;
 
-int checkGps(const gps_data *data) {
-    if (data->latitude > 90000000 || data->longitude < -180000000 || data->latitude < -90000000 ||  data->longitude > 180000000) {
-        return 0; // Invalid GPS data
-    }
-    
-    return 1; // Valid GPS data
+int ANS = INT_MAX, n, temp = 0;
+int w[35][5];
+int mask[35];
+
+int abs(int i){
+    return (i>=0) ? i : -1*i;
 }
 
-void gps_logger(const char* file_name, const gps_data* data_array, uint32_t entries) {
-    FILE *file = fopen(file_name, "a");
-    
-    if (file == NULL) {
-        printf("Error opening file %s\n", file_name);
-        return;
+int min(int x, int y){
+    return (x>=y) ? y : x;
+}
+
+int dist(int sX, int sY, int tX, int tY){
+    return abs(sX-tX) + abs(sY-tY);
+}
+
+void wormhole(int sX, int sY, int tX, int tY, int value){
+    ANS = min(ANS, dist(sX, sY, tX, tY) + value);
+
+    for(int i=0; i<n; i++){
+        if(mask[i] == 0){
+            mask[i] = 1;
+
+            /* Choose lower end of wormhole */
+            temp = dist(sX, sY, w[i][0], w[i][1]) + w[i][4] + value;
+            wormhole(w[i][2], w[i][3], tX, tY, temp);
+
+            /* Choose upper end of wormhole */
+            temp = dist(sX, sY, w[i][2], w[i][3]) + w[i][4] + value;
+            wormhole(w[i][0], w[i][1], tX, tY, temp);
+
+            mask[i] = 0;
+        }
     }
-    
-    uint32_t prev_timestamp = 0;
-    for (uint32_t i = 0; i < entries; i++) {
-        // Check timestamp
-        if (data_array[i].timestamp <= prev_timestamp) {
-            printf("Wrong timestamp at entry %u\n", i);
-            continue;
-        }
-        prev_timestamp = data_array[i].timestamp;
+}
 
-        // Validate GPS data
-        if (!checkGps(&data_array[i])) {
-            printf("Invalid GPS data at entry %u\n", i);
-            continue;
-        }
-
-        // Calculate checksum
-        uint32_t checksum = 0;
-        const uint8_t *ptr = (const uint8_t *)&data_array[i];
-        size_t size = sizeof(gps_data);
-        for (size_t j = 0; j < size; j++) {
-            checksum ^= ptr[j];
+int main() {
+    int t, sX, sY, tX, tY;
+    cin >> t;
+    while(t--){
+    	ANS = INT_MAX;
+        cin >> n;
+        cin >> sX >> sY >> tX >> tY;
+        for(int i=0; i<n; i++){
+            mask[i] = 0;
+            for(int j=0; j<5; j++){
+                cin >> w[i][j];
+            }
         }
 
-        // Write data to the file in the specified format
-        fprintf(file, "%u,%.6f,%c,%.6f,%c,%d,%u,%u\r\n",
-                data_array[i].timestamp, data_array[i].latitude / 1000000.0, data_array[i].latitude_direction,
-                data_array[i].longitude / 1000000.0, data_array[i].longitude_direction, data_array[i].altitude,
-                data_array[i].num_satellites, checksum);
+        wormhole(sX, sY, tX, tY, 0);
+        cout << ANS << endl;
     }
-    
-    fclose(file);
+    return 0;
 }
